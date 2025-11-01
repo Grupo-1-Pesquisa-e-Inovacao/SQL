@@ -48,7 +48,7 @@ CREATE TABLE municipio (
 );
 
 CREATE TABLE media_aluno_enem (
-  idMediaAluno INT PRIMARY KEY NOT NULL,
+  idMediaAluno INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
   idEstado INT NOT NULL,
   idMunicipio INT NOT NULL,
   inscricao_enem VARCHAR(100) NOT NULL,
