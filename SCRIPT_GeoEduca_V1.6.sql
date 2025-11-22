@@ -20,15 +20,14 @@ CREATE TABLE estado (
 );
 
 CREATE TABLE usuario (
-  idUsuario INT NOT NULL auto_increment,
+  idUsuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
   idSecretaria INT,
   idEstado INT NOT NULL,
-  administrador boolean,
+  administrador BOOLEAN,
   nome VARCHAR(100) NOT NULL,
   email VARCHAR(150) NOT NULL,
   senha VARCHAR(25) NOT NULL,
   data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (idUsuario, idSecretaria),
   CONSTRAINT fk_usuario_secretaria
     FOREIGN KEY (idSecretaria) REFERENCES secretaria (idSecretaria),
   CONSTRAINT fk_usuario_estado1
@@ -112,6 +111,9 @@ INSERT INTO estado (idUF, nomeUf, posicaoIDHM, idhm, posicaoIDHM_educacao, idhmE
 
 INSERT INTO usuario (idSecretaria, idEstado, administrador, nome, email, senha)
 VALUES (1, 1, true, 'Admin 01', 'admin@gmail.com', '123');
+
+INSERT INTO usuario (idSecretaria, idEstado, administrador, nome, email, senha)
+VALUES (NULL, 2, false, 'Adalberto Freitas', 'adalberto@gmail.com', '123@3434');
 
 SELECT * FROM secretaria;
 SELECT * FROM usuario;
