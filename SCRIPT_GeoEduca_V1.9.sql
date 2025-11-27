@@ -20,7 +20,7 @@ CREATE TABLE estado (
 );
 
 CREATE TABLE usuario (
-  idUsuario INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  idUsuario INT NOT NULL AUTO_INCREMENT,
   idSecretaria INT,
   idEstado INT NOT NULL,
   administrador BOOLEAN,
@@ -28,6 +28,7 @@ CREATE TABLE usuario (
   email VARCHAR(150) NOT NULL,
   senha VARCHAR(25) NOT NULL,
   data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (idUsuario, idSecretaria),
   CONSTRAINT fk_usuario_secretaria
     FOREIGN KEY (idSecretaria) REFERENCES secretaria (idSecretaria),
   CONSTRAINT fk_usuario_estado1
@@ -48,9 +49,10 @@ CREATE TABLE municipio (
 );
 
 CREATE TABLE media_aluno_enem (
-  idMediaAluno INT PRIMARY KEY NOT NULL,
+  idMediaAluno INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   idEstado INT NOT NULL,
   idMunicipio INT NOT NULL,
+  ano INT NOT NULL,
   inscricao_enem VARCHAR(100) NOT NULL,
   nota_candidato DECIMAL(6,2) NOT NULL,
   CONSTRAINT fk_media_aluno_enem_estado1
@@ -61,7 +63,7 @@ CREATE TABLE media_aluno_enem (
 
 CREATE TABLE auditoria (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  msg_erro VARCHAR(255),
+  msg VARCHAR(255),
   tipo_acao ENUM('Select', 'Insert', 'Delete', 'Update') NOT NULL,
   data_acao DATETIME NOT NULL,
   status_acao ENUM('Sucesso', 'Erro') NOT NULL,
@@ -73,8 +75,37 @@ CREATE TABLE processamento_planilha (
 idProcessamento INT PRIMARY KEY AUTO_INCREMENT,
 nome_arquivo VARCHAR(255) NOT NULL,
 data_processamento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+linhas_nao_inseridas BIGINT NOT NULL,
 linhas_processadas BIGINT NOT NULL,
 status VARCHAR(20) NOT NULL -- 'SUCESSO', 'ERRO', 'EM_ANDAMENTO'
+);
+
+CREATE TABLE slack_config (
+ idSlackConfig INT PRIMARY KEY AUTO_INCREMENT,
+ nome_config VARCHAR(100) NOT NULL,
+ webhook_url VARCHAR(300) NOT NULL,
+ canal_padrao VARCHAR(100) NOT NULL,
+ data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE slack_evento (
+ idSlackEvento INT PRIMARY KEY AUTO_INCREMENT,
+ nome_evento VARCHAR(255) NOT NULL,
+ descricao VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE usuario_slack_notificacao (
+ idUsuarioSlack INT PRIMARY KEY AUTO_INCREMENT,
+ idUsuario INT NOT NULL,
+ idSlackConfig INT NOT NULL,
+ idSlackEvento INT NOT NULL,
+ receber_notificacao BOOLEAN NOT NULL DEFAULT TRUE,
+ CONSTRAINT fk_usn_usuario
+   FOREIGN KEY (idUsuario) REFERENCES usuario (idUsuario),
+ CONSTRAINT fk_usn_slack_config
+   FOREIGN KEY (idSlackConfig) REFERENCES slack_config (idSlackConfig),
+ CONSTRAINT fk_usn_slack_evento
+   FOREIGN KEY (idSlackEvento) REFERENCES slack_evento (idSlackEvento)
 );
 
 INSERT INTO secretaria (nome, tipo, data_criacao)
@@ -112,9 +143,6 @@ INSERT INTO estado (idUF, nomeUf, posicaoIDHM, idhm, posicaoIDHM_educacao, idhmE
 INSERT INTO usuario (idSecretaria, idEstado, administrador, nome, email, senha)
 VALUES (1, 1, true, 'Admin 01', 'admin@gmail.com', '123');
 
-INSERT INTO usuario (idSecretaria, idEstado, administrador, nome, email, senha)
-VALUES (NULL, 2, false, 'Adalberto Freitas', 'adalberto@gmail.com', '123@3434');
-
 SELECT * FROM secretaria;
 SELECT * FROM usuario;
 SELECT * FROM estado;
@@ -123,4 +151,3 @@ SELECT u.idUsuario, u.nome, u.email, u.administrador, e.nomeUf AS estado
     FROM usuario u
     JOIN estado e ON u.idEstado = e.idUF
     WHERE u.email = 'admin@gmail.com' AND u.senha = '123';
- 
