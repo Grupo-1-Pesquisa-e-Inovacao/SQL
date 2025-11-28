@@ -81,31 +81,18 @@ status VARCHAR(20) NOT NULL -- 'SUCESSO', 'ERRO', 'EM_ANDAMENTO'
 );
 
 CREATE TABLE slack_config (
- idSlackConfig INT PRIMARY KEY AUTO_INCREMENT,
- nome_config VARCHAR(100) NOT NULL,
- webhook_url VARCHAR(300) NOT NULL,
- canal_padrao VARCHAR(100) NOT NULL,
- data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+idSlackConfig INT PRIMARY KEY AUTO_INCREMENT,
+nome_config VARCHAR(100) NOT NULL,
+webhook_url VARCHAR(300) NOT NULL,
+canal_padrao VARCHAR(100) NOT NULL,
+data_criacao DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
+ 
 CREATE TABLE slack_evento (
- idSlackEvento INT PRIMARY KEY AUTO_INCREMENT,
- nome_evento VARCHAR(255) NOT NULL,
- descricao VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE usuario_slack_notificacao (
- idUsuarioSlack INT PRIMARY KEY AUTO_INCREMENT,
- idUsuario INT NOT NULL,
- idSlackConfig INT NOT NULL,
- idSlackEvento INT NOT NULL,
- receber_notificacao BOOLEAN NOT NULL DEFAULT TRUE,
- CONSTRAINT fk_usn_usuario
-   FOREIGN KEY (idUsuario) REFERENCES usuario (idUsuario),
- CONSTRAINT fk_usn_slack_config
-   FOREIGN KEY (idSlackConfig) REFERENCES slack_config (idSlackConfig),
- CONSTRAINT fk_usn_slack_evento
-   FOREIGN KEY (idSlackEvento) REFERENCES slack_evento (idSlackEvento)
+idSlackEvento INT PRIMARY KEY AUTO_INCREMENT,
+nome_evento VARCHAR(255) NOT NULL,
+descricao VARCHAR(255) NOT NULL,
+ligado BOOLEAN DEFAULT TRUE
 );
 
 INSERT INTO secretaria (nome, tipo, data_criacao)
