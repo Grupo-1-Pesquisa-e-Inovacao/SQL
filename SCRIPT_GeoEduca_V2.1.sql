@@ -92,7 +92,9 @@ CREATE TABLE slack_evento (
 idSlackEvento INT PRIMARY KEY AUTO_INCREMENT,
 nome_evento VARCHAR(255) NOT NULL,
 descricao VARCHAR(255) NOT NULL,
-ligado BOOLEAN DEFAULT TRUE
+ligado BOOLEAN DEFAULT TRUE,
+fkSlackConfig INT,
+CONSTRAINT fkSlack_Config FOREIGN KEY (fkSlackConfig) REFERENCES slack_config(idSlackConfig)
 );
 
 INSERT INTO secretaria (nome, tipo, data_criacao)
